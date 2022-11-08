@@ -3,14 +3,29 @@ import 'package:sql_conn/sql_conn.dart';
 
 class SQLServer {
   var connection = SqlConn.connect(
-      ip: "192.168.10.219",
-      //ip: "192.168.15.13",
+      ip: ip(),
       port: "1433",
       databaseName: "conferencia",
       username: "sa",
-      password: retornaSenhaPrivada().return_senha());
+      password: senha());
 
-  Future cadastraConferencia() async {
+  Future<void> cadastraConferencia(
+      conferente, separador, erro, turno, comentario) async {
+    try {
+      await connection;
+      String periodo = 'Manha';
+      if (turno == 1) {
+        periodo = 'Tarde';
+      }
 
+      var now = new DateTime.now();
+      String data = "${now.day}-${now.month}-${now.year}";
+      String query =
+          "INSERT INTO dados_conferencia VALUES ('$conferente','$separador', $erro, '$periodo', '$comentario', '$data')";
+      var res = await SqlConn.writeData(query);
+    } catch(e) {
+      print('ierro sql');
+      print(e);
+    }
+    }
   }
-}
